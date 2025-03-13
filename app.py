@@ -55,8 +55,10 @@ def upload_files():
             "bill_receipt_url": bill_upload["secure_url"],
         }
         result = collection.insert_one(data)
-        data[")id"]=str(result.inserted_id)
-        return jsonify({"message": "Data stored successfully", "data": data}), 201
+        stored_data = collection.find_one({"_id": result.inserted_id})
+        stored_data["_id"] = str(stored_data["_id"])  # Convert ObjectId to string
+
+        return jsonify({"message": "Data stored successfully", "data": stored_data}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
