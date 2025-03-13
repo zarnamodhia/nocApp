@@ -3,20 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Form</title>
+    <title>NOC Submission</title>
 </head>
 <body>
-    <h2>User Registration</h2>
-    <form action="/submit" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br><br>
+    <h2>Submit Your Details</h2>
+    <form action="/submit" method="post" enctype="multipart/form-data">
+        <label>Name:</label>
+        <input type="text" name="name" required><br><br>
+        
+        <label>Email:</label>
+        <input type="email" name="email" required><br><br>
+        
+        <label>NOC Certificate (PDF):</label>
+        <input type="file" name="noc_certificate" accept="application/pdf" required><br><br>
+        
+        <label>Bill Receipt (PDF):</label>
+        <input type="file" name="bill_receipt" accept="application/pdf" required><br><br>
 
         <button type="submit">Submit</button>
     </form>
+
+    <h2>Stored Users</h2>
+    <button onclick="fetchUsers()">Load Users</button>
+    <div id="user-list"></div>
+
+    <script>
+        function fetchUsers() {
+            fetch('/get_users')
+                .then(response => response.json())
+                .then(data => {
+                    let userList = document.getElementById("user-list");
+                    userList.innerHTML = "";
+                    data.users.forEach(user => {
+                        userList.innerHTML += `
+                            <p><strong>Name:</strong> ${user.name} <br>
+                            <strong>Email:</strong> ${user.email} <br>
+                            <strong>NOC Certificate:</strong> <a href="${user.noc_certificate_url}" target="_blank">View</a> <br>
+                            <strong>Bill Receipt:</strong> <a href="${user.bill_receipt_url}" target="_blank">View</a></p>
+                            <hr>`;
+                    });
+                })
+                .catch(error => console.error("Error fetching users:", error));
+        }
+    </script>
 </body>
 </html>
