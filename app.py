@@ -6,6 +6,7 @@ import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
 import urllib.parse
+import uuid
 
 # Load environment variables
 load_dotenv()
@@ -29,6 +30,10 @@ cloudinary.config(
     api_secret="CRR0aYWoUTjgSYZ0FOsjOvUhJMs",
 )
 
+ALLOWED_EXTENSIONS = {"pdf"}
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # Serve HTML Form
 @app.route("/")
 def index():
@@ -43,9 +48,16 @@ def upload_files():
         noc_file = request.files["noc_certificate"]
         bill_file = request.files["bill_receipt"]
 
+        if not (allowed_file(noc_file.filename) and allowed_file(bill_file.filename)):
+            return jsonify({"error": "Only PDF files are allowed"}), 400
+
+        # Generate Unique Filenames
+        noc_filename = f"noc_{uuid.uuid4()}.pdf"
+        bill_filename = f"bill_{uuid.uuid4()}.pdf"
+
         # Upload PDFs to Cloudinary
-        noc_upload = cloudinary.uploader.upload(noc_file, resource_type="raw")
-        bill_upload = cloudinary.uploader.upload(bill_file, resource_type="raw")
+        noc_upload = cloudinary.uploader.upload(noc_file, resource_type="auto",public_id=noc_filename, format="pdf",overwrite=True)
+        bill_upload = cloudinary.uploader.upload(bill_file, resource_type="auto",public_id=bill_filename, format="pdf", overwrite=True)
 
         # Store Data in MongoDB
         data = {
