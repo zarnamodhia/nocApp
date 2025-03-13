@@ -5,7 +5,7 @@ import io
 from flask import Flask, request, jsonify, render_template, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
-from bson import ObjectId
+from bson.son import ObjectId,SON
 from dotenv import load_dotenv
 
 # Load environment variables
