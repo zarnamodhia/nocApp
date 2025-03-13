@@ -56,8 +56,8 @@ def upload_files():
         bill_filename = f"bill_{uuid.uuid4()}.pdf"
 
         # Upload PDFs to Cloudinary
-        noc_upload = cloudinary.uploader.upload(noc_file, resource_type="raw",public_id=noc_filename, format="pdf",type="upload",overwrite=True)
-        bill_upload = cloudinary.uploader.upload(bill_file, resource_type="raw",public_id=bill_filename, format="pdf",type="upload",overwrite=True)
+        noc_upload = cloudinary.uploader.upload(noc_file, resource_type="raw",public_id=noc_filename, folder="noc_certificates",overwrite=True)
+        bill_upload = cloudinary.uploader.upload(bill_file, resource_type="raw",public_id=bill_filename, folder="bill_receipts",overwrite=True)
 
         # Store Data in MongoDB
         data = {
