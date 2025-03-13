@@ -5,6 +5,7 @@ from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
+import urllib.parse
 
 # Load environment variables
 load_dotenv()
@@ -14,15 +15,18 @@ app = Flask(__name__)
 CORS(app)
 
 # MongoDB Atlas Setup
-client = MongoClient(os.getenv("MONGO_URI"))
+encoded_username=urllib.parse.quote_plus("modhiazarnaa")
+encoded_password=urllib.parse.quote_plus("zarna@6408")
+database_name="NocDatabase"
+client = MongoClient(f"mongodb+srv://{encoded_username}:{encoded_password}@nocdatabase.u7b7o.mongodb.net/{database_name}?retryWrites=true&w=majority")
 db = client["NocDatabase"]
 collection = db["UserDetails"]
 
 # Cloudinary Setup
 cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    cloud_name="dqzrfjurn",
+    api_key="297492448329361",
+    api_secret="CRR0aYWoUTjgSYZ0FOsjOvUhJMs",
 )
 
 # Serve HTML Form
