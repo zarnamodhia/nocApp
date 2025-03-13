@@ -22,7 +22,7 @@ encoded_username = urllib.parse.quote_plus(MONGO_USERNAME)
 encoded_password = urllib.parse.quote_plus(MONGO_PASSWORD)
 
 # MongoDB Connection URI
-MONGO_URI = f"mongodb+srv://{encoded_username}:{encoded_password}@{CLUSTER_URL}/{DATABASE_NAME}?retryWrites=true&w=majority"
+MONGO_URI = f"mongodb+srv://{encoded_username}:{encoded_password}@{CLUSTER_URL}/{DATABASE_NAME}?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true"
 
 # Connect to MongoDB
 client = pymongo.MongoClient(MONGO_URI)
