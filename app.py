@@ -54,8 +54,8 @@ def upload_files():
             "noc_certificate_url": noc_upload["secure_url"],
             "bill_receipt_url": bill_upload["secure_url"],
         }
-        collection.insert_one(data)
-
+        result = collection.insert_one(data)
+        data[")id"]=str(result.inserted_id)
         return jsonify({"message": "Data stored successfully", "data": data}), 201
 
     except Exception as e:
