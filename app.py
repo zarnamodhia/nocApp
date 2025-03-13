@@ -22,8 +22,8 @@ cloudinary.config(
 # Connect to MongoDB Atlas
 MONGO_URI = os.getenv("MONGO_URI")
 client = pymongo.MongoClient(MONGO_URI)
-db = client["noc_database"]
-collection = db["user_data"]
+db = client["NocDatabase"]
+collection = db["UserDetails"]
 
 # 🔹 Render HTML Form
 @app.route("/")
