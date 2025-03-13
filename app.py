@@ -6,6 +6,19 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+import urllib.parse
+
+MONGO_USERNAME = urllib.parse.quote_plus(os.getenv("MONGO_USERNAME", ""))
+MONGO_PASSWORD = urllib.parse.quote_plus(os.getenv("MONGO_PASSWORD", ""))
+MONGO_CLUSTER = os.getenv("MONGO_CLUSTER", "")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "NocDatabase")
+
+MONGO_URI = f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_CLUSTER}/{MONGO_DB_NAME}?retryWrites=true&w=majority"
+
+client = pymongo.MongoClient(MONGO_URI)
+db = client[MONGO_DB_NAME]
+collection = db["UserDetails"]
+
 # Load environment variables
 load_dotenv()
 
@@ -18,13 +31,6 @@ cloudinary.config(
     api_key=os.getenv("CLOUDINARY_API_KEY"),
     api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
-
-# Connect to MongoDB Atlas
-MONGO_URI = os.getenv("MONGO_URI")
-client = pymongo.MongoClient(MONGO_URI)
-db = client["NocDatabase"]
-collection = db["UserDetails"]
-
 # 🔹 Render HTML Form
 @app.route("/")
 def index():
