@@ -4,20 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload NOC & Bill Receipt</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        form { margin: 20px auto; max-width: 400px; }
+        label, input { display: block; width: 100%; margin-bottom: 10px; }
+        #pdfViewer { width: 80%; height: 500px; border: 1px solid #ccc; margin-top: 20px; display: none; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Upload Your Documents</h2>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="text" name="username" placeholder="Enter your name" required><br>
-            <input type="email" name="email" placeholder="Enter your email" required><br>
-            <label for="noc_certificate">Upload NOC Certificate (PDF)</label>
-            <input type="file" name="noc_certificate" accept="application/pdf" required><br>
-            <label for="bill_receipt">Upload Bill Receipt (PDF)</label>
-            <input type="file" name="bill_receipt" accept="application/pdf" required><br>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+
+    <h2>Upload Your Documents</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="username">Name:</label>
+        <input type="text" name="username" id="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="noc_certificate">NOC Certificate (PDF):</label>
+        <input type="file" name="noc_certificate" id="noc_certificate" accept="application/pdf" required>
+
+        <label for="bill_receipt">Bill Receipt (PDF):</label>
+        <input type="file" name="bill_receipt" id="bill_receipt" accept="application/pdf" required>
+
+        <button type="submit">Upload</button>
+    </form>
+
+    <h3>Uploaded Files</h3>
+    <p id="nocLink" style="display: none;">
+        NOC Certificate: <a id="nocUrl" href="#" target="_blank"></a>
+    </p>
+    <p id="billLink" style="display: none;">
+        Bill Receipt: <a id="billUrl" href="#" target="_blank"></a>
+    </p>
+
+    <iframe id="pdfViewer" src=""></iframe>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+
+            let response = await fetch("/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            if (result.data) {
+                let nocUrl = result.data.noc_certificate_url;
+                let billUrl = result.data.bill_receipt_url;
+
+                // Display NOC Certificate Link
+                document.getElementById("nocLink").style.display = "block";
+                document.getElementById("nocUrl").href = nocUrl;
+                document.getElementById("nocUrl").textContent = "View NOC Certificate";
+
+                // Display Bill Receipt Link
+                document.getElementById("billLink").style.display = "block";
+                document.getElementById("billUrl").href = billUrl;
+                document.getElementById("billUrl").textContent = "View Bill Receipt";
+
+                // Display the first PDF in iframe
+                document.getElementById("pdfViewer").src = nocUrl;
+                document.getElementById("pdfViewer").style.display = "block";
+            } else {
+                alert("Upload failed: " + result.error);
+            }
+        };
+    </script>
+
 </body>
 </html>
